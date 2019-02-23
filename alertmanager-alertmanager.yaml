@@ -1,0 +1,41 @@
+apiVersion: monitoring.coreos.com/v1
+kind: Alertmanager
+metadata:
+  labels:
+    alertmanager: main
+  name: main
+  namespace: prometheus
+spec:
+  storage:
+    volumeClaimTemplate:
+      spec:
+        storageClassName: gp2
+        resources:
+          requests:
+            storage: 300Gi
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: kops.k8s.io/instancegroup
+            operator: In
+            values:
+            - support-nodes
+  tolerations:
+  - key: "dedicated"
+    operator: "Equal"
+    value: "supportNodes"
+    effect: "NoSchedule"
+  baseImage: quay.io/prometheus/alertmanager
+  externalUrl: "https://alert-manager.stg-kudo.net"
+  nodeSelector:
+    kops.k8s.io/instancegroup: support-nodes
+  replicas: 3
+  securityContext:
+    fsGroup: 2000
+    runAsNonRoot: true
+    runAsUser: 1000
+  serviceAccountName: alertmanager-main
+  version: v0.16.1
+

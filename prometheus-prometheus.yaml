@@ -1,0 +1,59 @@
+apiVersion: monitoring.coreos.com/v1
+kind: Prometheus
+metadata:
+  labels:
+    prometheus: k8s
+  name: k8s
+  namespace: prometheus
+spec:
+  storage:
+    volumeClaimTemplate:
+      spec:
+        storageClassName: gp2
+        resources:
+          requests:
+            storage: 500Gi
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: kops.k8s.io/instancegroup
+            operator: In
+            values:
+            - prometheus-nodes
+  tolerations:
+  - key: "dedicated"
+    operator: "Equal"
+    value: "prometheusNodes"
+    effect: "NoSchedule"
+  alerting:
+    alertmanagers:
+    - name: alertmanager-main
+      namespace: prometheus
+      port: web
+  baseImage: quay.io/prometheus/prometheus
+  externalUrl: "https://prometheus.stg-kudo.net"
+  nodeSelector:
+    kops.k8s.io/instancegroup: prometheus-nodes
+  replicas: 2
+  resources:
+    requests:
+      memory: 1Gi
+    limits:
+      memory: 2Gi
+  ruleSelector:
+    matchLabels:
+      prometheus: k8s
+      role: alert-rules
+  securityContext:
+    fsGroup: 2000
+    runAsNonRoot: true
+    runAsUser: 1000
+  serviceAccountName: prometheus-k8s
+  serviceMonitorNamespaceSelector: {}
+  serviceMonitorSelector: {}
+  thanos:
+    peers: thanos-peers.default.svc:10900
+  version: v2.7.1
+
