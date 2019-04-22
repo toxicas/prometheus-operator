@@ -1,0 +1,13 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: kube-apiserver
+  namespace: kube-system
+  labels:
+    k8s-app: kube-apiserver
+spec:
+  ports:
+  - protocol: TCP
+    port: 443
+    targetPort: 443
+    name: https

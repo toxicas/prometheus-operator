@@ -1,0 +1,13 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: kube-scheduler
+  namespace: kube-system
+  labels:
+    k8s-app: kube-scheduler
+spec:
+  ports:
+  - protocol: TCP
+    port: 10251
+    targetPort: 10251
+    name: http-metrics

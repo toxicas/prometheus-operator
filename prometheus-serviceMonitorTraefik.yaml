@@ -1,9 +1,10 @@
+---
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
   labels:
-    k8s-app: traefik
-  name: traefik
+    k8s-app: traefik-external
+  name: traefik-external
   namespace: prometheus
 spec:
   endpoints:
@@ -15,4 +16,24 @@ spec:
     - kube-system
   selector:
     matchLabels:
-      k8s-app: traefik
+      k8s-app: traefik-external
+
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    k8s-app: traefik-internal
+  name: traefik-internal
+  namespace: prometheus
+spec:
+  endpoints:
+  - interval: 30s
+    port: http
+  jobLabel: k8s-app
+  namespaceSelector:
+    matchNames:
+    - kube-system
+  selector:
+    matchLabels:
+      k8s-app: traefik-internal

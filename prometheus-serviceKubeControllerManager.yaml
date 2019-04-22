@@ -1,0 +1,13 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: kube-controller-manager
+  namespace: kube-system
+  labels:
+    k8s-app: kube-controller-manager
+spec:
+  ports:
+  - protocol: TCP
+    port: 10252
+    targetPort: 10252
+    name: http-metrics

@@ -5,12 +5,14 @@ metadata:
   name: alertmanager-main
   namespace: prometheus
   labels:
-    expose: internal
+    expose: external
   annotations:
-    kubernetes.io/ingress.class: traefik-internal
+    kubernetes.io/ingress.class: traefik-external
+    ingress.kubernetes.io/auth-type: basic
+    ingress.kubernetes.io/auth-secret: basic-auth
 spec:
   rules:
-  - host: alert-manager.kudoplay.net
+  - host: alert-manager.dyel.io
     http:
       paths:
       - backend:
